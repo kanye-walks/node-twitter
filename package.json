@@ -1,0 +1,10 @@
+{
+  "name": "twitter-demo",
+  "version": "0.0.1",
+  "description": "A Node.js, socket.io and ntwitter demo.",
+  "dependencies": {
+    "socket.io": "0.9.13",
+    "ntwitter": "0.5.0",
+    "mime": "~1.2.7"
+  }
+}

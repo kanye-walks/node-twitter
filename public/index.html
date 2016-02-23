@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+  <title>Chat</title>
+  <link rel='stylesheet' href='/stylesheets/style.css'></link>
+  <style>
+    html { 
+      background: url(assets/kanye.png) no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+    #content{
+      position:relative;
+      width:100%;
+      text-align: center;
+    }
+    #messages{
+      background-color:#fff;
+      max-width: 100%;
+      width: 700px;
+      margin:0 auto;
+    }
+    .twitter-elem{
+      color:#4099FF;
+      color: #555;
+      font-size: 15px;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 10px;
+      border-radius: 0px;
+      border: 1px solid #eee;
+      margin-bottom: -1px;
+    }
+    .twitter-header {
+      width: 100%;
+      padding: 5px;
+    }
+    .twitter-header img{
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      display: block;
+      float:left;
+    }
+    .header-text {
+      padding-left: 10px;
+      float: left;
+      text-align: left;
+    }
+    .clearfix {
+      overflow: auto;
+      zoom: 1;
+    }
+    .twitter-date {
+      float:right;
+      padding-right: 10px;
+      font-size: 14px;
+      color: #999;
+    }
+    .twitter-text {
+      text-align:left;
+    }
+  </style>
+</head>
+
+<body>
+<div id='content'>
+  <div id='room'></div>
+  <div id='room-list'></div>
+  <div id='messages'></div>
+</div>
+
+<script src='/socket.io/socket.io.js' type='text/javascript'></script>
+<script src='http://code.jquery.com/jquery-1.8.0.min.js' type='text/javascript'></script>
+<script type="text/javascript">
+    var _socket = null;
+    $(function() {
+        if(io !== undefined) {
+            // Here you create the connection with the server
+            _socket = io.connect();
+
+            // This will listen to the "new tweet" signal everytime
+            // there's a new tweet incoming into the stream
+            _socket.on("new tweet", function(tweet) {
+                var newElemString = '<div class="twitter-elem"> \
+                    <div class="twitter-header clearfix"> \
+                    <img src="' + tweet.avatar + '"></img> \
+                    <div class="header-text"><strong>' + tweet.author + '</strong><br>@' + tweet.screenname + '</div> \
+                    <div class="twitter-date">' +  tweet.date + '</div></div> \
+                    <div class="twitter-text">RT @BaeChromaz: Leaked Texts Between Kim and Kanye. https://t.co/u9kbX1mTab </div>\
+                  </div>'
+               // var newElem = $('<div class="twitter-elem"></div>').text(tweet.text);
+                var newElem = $(newElemString);
+                $("#messages").append(newElem);
+            });
+
+            // This will listen when the server emits the "connected" signal
+            // informing to the client that the connection has been stablished
+            _socket.on("connected", function(r) {
+                $("head").find("title").html("Tracking now: " + r.tracking);
+                $(".tracking").html(r.tracking);
+
+                // Here the client tells the server to "start stream"
+                emitMsj("start stream");
+            });
+        }
+    });
+    function emitMsj(signal, o) {
+        if(_socket) {
+            _socket.emit(signal, o);
+        }
+        else {
+            alert("Shit! Socket.io didn't start!");
+        }
+    }
+</script>
+</body>
+</html>
